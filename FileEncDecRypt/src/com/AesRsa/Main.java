@@ -2,50 +2,31 @@ package com.AesRsa;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 public class Main {
+    private static String AES = "AES";
+    private static String DES = "DES";
+    private static String RSA = "RSA";
+
+    private static FileCipher fileCipher = new FileCipherImpl(AES);
 
     public static void main(String[] args) {
+        String inputFile = "data\\OriginalMessage.bmp";
+        String encryptedFile = "data\\EncryptedFile";
+        String outputFile = "data\\DecryptedFile.bmp";
+
         var secretKey = new SecretKeySpec(args[0].getBytes(), "AES");
-
-        try {
-            var cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-
-            try(var fileInput = new FileInputStream("data\\OriginalMessage.bmp")){
-                byte[] output = cipher.doFinal(fileInput.readAllBytes());
-
-                try(var fileOutput = new FileOutputStream("data\\EncryptedFile")){
-                    fileOutput.write(output);
-                    fileOutput.flush();
-                }
-            };
-
-        } catch (GeneralSecurityException | IOException e){
-            System.out.println("Encrypting failed");
-            System.out.print(e.getMessage());
-        }
-
-        try {
-            var cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-
-            try(var fileInput = new FileInputStream("data\\EncryptedFile")){
-                byte[] output = cipher.doFinal(fileInput.readAllBytes());
-
-                try(var fileOutput = new FileOutputStream("data\\DecryptedFile.bmp")){
-                    fileOutput.write(output);
-                    fileOutput.flush();
-                }
-            };
-
-        } catch (GeneralSecurityException | IOException e){
-            System.out.println("Decrypting failed");
-            System.out.print(e.getMessage());
-        }
+        EncryptFile(secretKey, inputFile, encryptedFile);
+        DecryptFile(secretKey, encryptedFile, outputFile);
     }
+
+    private static void EncryptFile(SecretKeySpec secretKey, String inputFile, String outputFile) {
+        fileCipher.TransformFile(secretKey,  inputFile, outputFile, Cipher.ENCRYPT_MODE);
+    }
+
+    private static void DecryptFile(SecretKeySpec secretKey, String inputFile, String outputFile) {
+        fileCipher.TransformFile(secretKey, inputFile, outputFile, Cipher.DECRYPT_MODE);
+    }
+
+
 }
