@@ -1,32 +1,30 @@
 package com.AesRsa;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import static com.AesRsa.Algorithms.AES;
 
 public class Main {
-    private static String AES = "AES";
-    private static String DES = "DES";
-    private static String RSA = "RSA";
-
-    private static FileCipher fileCipher = new FileCipherImpl(AES);
 
     public static void main(String[] args) {
-        String inputFile = "data\\OriginalMessage.bmp";
-        String encryptedFile = "data\\EncryptedFile";
-        String outputFile = "data\\DecryptedFile.bmp";
+        String secretKey = args[0];
 
-        var secretKey = new SecretKeySpec(args[0].getBytes(), "AES");
-        EncryptFile(secretKey, inputFile, encryptedFile);
-        DecryptFile(secretKey, encryptedFile, outputFile);
+        var inputDir = "data\\OriginalDirectory";
+        var encryptedDir = "data\\EncryptedDirectory";
+        var decryptedDir = "data\\DecryptedDirectory";
+
+        FileCipher fileCipher = new FileCipherImpl(AES, secretKey);
+
+        System.out.println("Regular Encryption about to start");
+        var start = System.nanoTime();
+        fileCipher.Encrypt(inputDir, encryptedDir);
+        var end = System.nanoTime();
+        long duration = end - start;
+        System.out.println("Regular Encryption ended in: " + (duration/1000000) + " milliseconds");
+
+        System.out.println("Parallel Encryption about to start");
+        start = System.nanoTime();
+        fileCipher.EncryptParallel(inputDir, encryptedDir);
+        end = System.nanoTime();
+        duration = end - start;
+        System.out.println("Parallel Encryption ended in: " + (duration/1000000) + " milliseconds");
     }
-
-    private static void EncryptFile(SecretKeySpec secretKey, String inputFile, String outputFile) {
-        fileCipher.TransformFile(secretKey,  inputFile, outputFile, Cipher.ENCRYPT_MODE);
-    }
-
-    private static void DecryptFile(SecretKeySpec secretKey, String inputFile, String outputFile) {
-        fileCipher.TransformFile(secretKey, inputFile, outputFile, Cipher.DECRYPT_MODE);
-    }
-
-
 }

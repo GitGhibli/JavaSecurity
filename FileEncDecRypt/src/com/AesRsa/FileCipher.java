@@ -1,8 +1,10 @@
 package com.AesRsa;
 
-import javax.crypto.spec.SecretKeySpec;
+public interface FileCipher {
 
-public interface FileCipher
-{
-    void TransformFile(SecretKeySpec secretKey, String inputFile, String outputFile, int mode);
+    void Encrypt(String inputDir, String outputDir);
+
+    void EncryptParallel(String inputDir, String outputDir);
+
+    void Decrypt(String inputDir, String outputDir);
 }
