@@ -16,17 +16,17 @@ public class Main {
             var cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            try(var fileInput = new FileInputStream("OriginalMessage.bmp")){
+            try(var fileInput = new FileInputStream("data\\OriginalMessage.bmp")){
                 byte[] output = cipher.doFinal(fileInput.readAllBytes());
 
-                try(var fileOutput = new FileOutputStream("EncryptedFile")){
+                try(var fileOutput = new FileOutputStream("data\\EncryptedFile")){
                     fileOutput.write(output);
                     fileOutput.flush();
                 }
             };
 
         } catch (GeneralSecurityException | IOException e){
-            System.out.println("Crypting failed");
+            System.out.println("Encrypting failed");
             System.out.print(e.getMessage());
         }
 
@@ -34,10 +34,10 @@ public class Main {
             var cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
-            try(var fileInput = new FileInputStream("EncryptedFile")){
+            try(var fileInput = new FileInputStream("data\\EncryptedFile")){
                 byte[] output = cipher.doFinal(fileInput.readAllBytes());
 
-                try(var fileOutput = new FileOutputStream("DecryptedFile.bmp")){
+                try(var fileOutput = new FileOutputStream("data\\DecryptedFile.bmp")){
                     fileOutput.write(output);
                     fileOutput.flush();
                 }
